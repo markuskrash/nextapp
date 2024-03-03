@@ -79,6 +79,11 @@
     color: #FFFF00;
 }
 
+.link_active {
+    background-color: #ffff00;
+    pointer-events: none;
+}
+
 @media (width <= 1440px) {
     .logo {
         width: 140px;
