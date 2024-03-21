@@ -13,10 +13,10 @@ const Footer = () =>{
                     <span className={Styles["logo-copy"]}>, XXI век</span>
                 </div>
                 :
-                <a href="/" className={Styles["logo"]}>
+                <Link href="/" className={Styles["logo"]}>
                     <span className={Styles["logo-name"]}>pindie</span>
                     <span className={Styles["logo-copy"]}>, XXI век</span>
-                </a>
+                </Link>
             }
             <ul className={Styles["social-list"]}>
                 <li className={Styles["item"]}>

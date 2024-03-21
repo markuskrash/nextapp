@@ -1,27 +1,24 @@
 "use client"
 import Styles from './AuthForm.module.css';
-import {useEffect, useState} from "react";
-import {authorize, getJWT, getMe, isResponseOk, setJWT} from "@/app/api/api-utils";
+import {useContext, useEffect, useState} from "react";
+import {authorize, getJWT, getMe, isResponseOk} from "@/app/api/api-utils";
 import {endpoints} from "@/app/api/config";
+import {useStore} from "@/app/store/app-store";
 
 export const AuthForm = (props) => {
+    const authContext = useStore();
     const [authData, setAuthData] = useState({identifier: "", password: ""});
-    const [userData, setUserData] = useState(null);
     const [message, setMessage] = useState({status: null, text: null});
 
     const handleInput = (e) => {
-        const newAuthData = authData;
-        newAuthData[e.target.name] = e.target.value;
-        setAuthData(newAuthData);
+        setAuthData({ ...authData, [e.target.name]: e.target.value });
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const userData = await authorize(endpoints.auth, authData);
         if (isResponseOk(userData)) {
-            setUserData(userData);
-            setJWT(userData.jwt);
-            props.setAuth(true);
+            authContext.login(userData.user, userData.jwt);
             setMessage({status: "success", text: "Вы авторизовались!"});
         } else {
             setMessage({status: "error", text: "Неверные почта или пароль"});
@@ -30,13 +27,13 @@ export const AuthForm = (props) => {
 
     useEffect(() => {
         let timer;
-        if (userData) {
+        if (authContext.user) {
             timer = setTimeout(() => {
                 props.close();
             }, 1000);
         }
         return () => clearTimeout(timer);
-    }, [userData]);
+    }, [authContext.user]);
 
     return (
         <form onSubmit={handleSubmit} className={Styles['form']}>

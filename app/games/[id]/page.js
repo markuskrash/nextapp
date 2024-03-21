@@ -1,13 +1,9 @@
 "use client"
 import Styles from "./Game.module.css";
-import {useEffect, useState} from "react";
-import {Overlay} from "@/app/components/Overlay/Overlay";
-import {Popup} from "@/app/components/Popup/Popup";
-import {AuthForm} from "@/app/components/AuthForm/AuthForm";
+import {useContext, useEffect, useState} from "react";
 import {endpoints} from "@/app/api/config";
 import {Preloader} from "@/app/components/Preloader/Preloader";
 import {
-    authorize,
     checkIfUserVoted,
     getJWT,
     getMe,
@@ -16,8 +12,10 @@ import {
     removeJWT,
     vote
 } from "@/app/api/api-utils";
+import {useStore} from "@/app/store/app-store";
 
 export default function GamePage(props) {
+    const authContext = useStore();
     const [game, setGame] = useState(null);
 
     useEffect(() => {
@@ -33,43 +31,22 @@ export default function GamePage(props) {
 
     const [preloaderVisible, setPreloaderVisible] = useState(true);
 
-    const [isAuthorized, setIsAuthorized] = useState(false);
-    const [currentUser, setCurrentUser] = useState(null);
-
     const [isVoted, setIsVoted] = useState(false);
 
     useEffect(() => {
-        if (currentUser && game) {
-            setIsVoted(checkIfUserVoted(game, currentUser.id));
+        if (authContext.user && game) {
+            setIsVoted(checkIfUserVoted(game, authContext.user.id));
         } else {
             setIsVoted(false);
         }
-    }, [currentUser, game]);
-
-    useEffect(() => {
-        const jwt = getJWT();
-        if (jwt) {
-            getMe(endpoints.me, jwt).then(
-                (userData) => {
-                    if (isResponseOk(userData)) {
-                        setIsAuthorized(true);
-                        setCurrentUser(userData);
-                    } else {
-                        setIsAuthorized(false);
-                        removeJWT();
-                    }
-                }
-            )
-
-        }
-    }, []);
+    }, [authContext.user, game]);
 
     const handleVote = async () => {
         const jwt = getJWT();
         let usersIdArray = game.users.length
             ? game.users.map((user) => user.id)
             : [];
-        usersIdArray.push(currentUser.id);
+        usersIdArray.push(authContext.user.id);
         const response = await vote(
             `${endpoints.games}/${game.id}`,
             jwt,
@@ -79,10 +56,11 @@ export default function GamePage(props) {
             setIsVoted(true);
             setGame({
                     ...game,
-                    users: [...game.users, currentUser],
+                    users: [...game.users, authContext.user],
                 }
             );
         }
+        setIsVoted(true);
     };
 
     return (
@@ -103,7 +81,7 @@ export default function GamePage(props) {
                         <p className={Styles["about__vote-amount"]}>За игру уже проголосовали: <span
                             className={Styles["about__accent"]}>{game.users.length}</span></p>
                         <button
-                            disabled={!isAuthorized || isVoted}
+                            disabled={!authContext.isAuth || isVoted}
                             className={`button ${Styles["about__vote-button"]}`}
                             onClick={handleVote}
                         >

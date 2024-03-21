@@ -1,0 +1,18 @@
+.game {
+    padding: 72px 96px;
+}
+
+
+
+@media (width <= 1200px) {
+    .game {
+        padding: 72px 32px;
+    }
+}
+
+@media (width <= 768px) {
+    .game {
+        padding: 40px 16px;
+    }
+
+}

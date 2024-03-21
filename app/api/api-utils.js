@@ -4,7 +4,7 @@ export const getData = async (url) => {
         if (response.status !== 200) {
             throw new Error('Ошибка получения данных')
         }
-        return await response.json()
+        return response.json()
     } catch (error) {
         return error
     }
@@ -15,11 +15,11 @@ export const isResponseOk = (response) => {
 };
 
 const normalizeDataObject = (obj) => {
-    return isResponseOk(obj) ? {
+    return {
         ...obj,
         category: obj.categories,
         users: obj.users_permissions_users,
-    } : obj;
+    }
 };
 
 export const normalizeData = (data) => {
@@ -30,12 +30,12 @@ export const normalizeData = (data) => {
 
 export const getNormalizedGamesDataByCategory = async (url, category) => {
     const data = await getData(`${url}?categories.name=${category}`);
-    return normalizeData(data);
+    return isResponseOk(data)? normalizeData(data) : data;
 };
 
 export const getNormalizedGameDataById = async (url, id) => {
     const data = await getData(`${url}/${id}`);
-    return normalizeDataObject(data);
+    return isResponseOk(data)? normalizeDataObject(data) : data;
 };
 
 export const authorize = async (url, data) => {
@@ -49,7 +49,7 @@ export const authorize = async (url, data) => {
         if (response.status !== 200) {
             throw new Error("Ошибка авторизации");
         }
-        return await response.json();
+        return response.json();
     } catch (error) {
         return error;
     }
@@ -64,7 +64,7 @@ export const getMe = async (url, jwt) => {
         if (response.status !== 200) {
             throw new Error("Ошибка получения данных");
         }
-        return await response.json();
+        return response.json();
     } catch (error) {
         return error;
     }
@@ -99,7 +99,7 @@ export const vote = async (url, jwt, usersArray) => {
         if (response.status !== 200) {
             throw new Error('Ошибка голосования')
         }
-        return await response.json()
+        return response.json()
     } catch (error) {
         return error
     }
