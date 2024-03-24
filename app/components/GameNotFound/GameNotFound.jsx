@@ -1,4 +1,4 @@
-import Styles from "GameNotFound.module.css"
+import Styles from "./GameNotFound.module.css"
 
 export const GameNotFound = () =>{
     return(

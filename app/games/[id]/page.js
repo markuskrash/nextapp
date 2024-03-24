@@ -13,6 +13,7 @@ import {
     vote
 } from "@/app/api/api-utils";
 import {useStore} from "@/app/store/app-store";
+import {GameNotFound} from "@/app/components/GameNotFound/GameNotFound";
 
 export default function GamePage(props) {
     const authContext = useStore();
@@ -93,9 +94,7 @@ export default function GamePage(props) {
         ) : preloaderVisible ? (
             <Preloader/>
         ) : (
-            <section className={Styles['game']}>
-                <p>Такой игры не существует 😢</p>
-            </section>
+            <GameNotFound/>
         )
 
     )

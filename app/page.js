@@ -1,7 +1,7 @@
+"use client"
 import "./globals.css"
 import Banner from "./components/Banner/Banner";
 import Promo from "./components/Promo/Promo";
-import CardsList from "@/app/components/CardsListSection/CardsList";
 import {endpoints} from "@/app/api/config";
 import {getNormalizedGamesDataByCategory} from "@/app/api/api-utils";
 import {CardsListSection} from "@/app/components/CardsListSection/CardsListSection";
